@@ -1,10 +1,8 @@
 //! Color palette for data-visualization components.
 //!
-//! The upstream lens components were coupled to an app-specific
-//! `ColorToken` + `Theme`. rdom-extensions is theme-agnostic: it speaks
-//! `rdom_tui::Color` directly. Callers who want their own colors pass
-//! explicit `Color`s; callers who don't get an auto-assigned series
-//! color from [`series_color`].
+//! rdom-extensions is theme-agnostic: it speaks `rdom_tui::Color` directly.
+//! Callers who want their own colors pass explicit `Color`s; callers who
+//! don't get an auto-assigned series color from [`series_color`].
 //!
 //! These defaults are reasonable on both dark and light terminals but
 //! are intentionally plain — a downstream app that has a real theme
@@ -14,8 +12,7 @@ use rdom_tui::Color;
 
 /// Default series-color assignment order. Index wraps around.
 ///
-/// Picked for distinguishability on a dark background; mirrors the
-/// 10-color ordering the upstream charts used.
+/// Picked for distinguishability on a dark background.
 pub const SERIES_PALETTE: &[Color] = &[
     Color::Rgb(0x4f, 0x9d, 0xff), // brand / blue
     Color::Rgb(0x3f, 0xc9, 0x6b), // success / green

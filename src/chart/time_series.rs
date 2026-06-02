@@ -1,11 +1,8 @@
 //! Time-series line chart rendered on a `<canvas>` via a braille grid.
 //!
-//! Ported from the upstream lens `TimeSeriesComponent`. The render
-//! pipeline is unchanged — collect → stack → smooth → scale → render →
-//! decorate → paint — but the paint target is the rdom-tui canvas
-//! [`RenderContext`] (local coords, `(0,0)` top-left) instead of a
-//! ratatui `Buffer`, and colors are `rdom_tui::Color` instead of theme
-//! tokens.
+//! Render pipeline: collect → stack → smooth → scale → render → decorate →
+//! paint, drawn into the canvas [`RenderContext`] (local coords, `(0,0)`
+//! top-left).
 //!
 //! Two tiers:
 //! - **Static**: [`TimeSeriesChart::new_static`] — all data upfront.

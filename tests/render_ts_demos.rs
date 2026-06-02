@@ -1,7 +1,7 @@
-//! Headless coverage for the time-series demo variants ported from the
-//! lens storybook — in particular that **threshold/guideline lines**
-//! render with their colored labels (the `100ms` / `150ms` reference
-//! lines), plus smoothing and the empty state.
+//! Headless coverage for the time-series demo variants — in particular
+//! that **threshold/guideline lines** render with their colored labels
+//! (the `100ms` / `150ms` reference lines), plus smoothing and the empty
+//! state.
 
 use rdom_extensions::chart::{DataPoint, Guideline, Series, TimeSeriesChart, TimeSeriesView};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};

@@ -1,5 +1,5 @@
-//! Time-series gallery — the seven lens storybook demos, ported to the
-//! rdom-extensions chart and made navigable.
+//! Time-series gallery — seven time-series demos (smooth, spiky, single,
+//! dense, live, live-spotty, empty), made navigable.
 //!
 //! ```bash
 //! cargo run --example timeseries_gallery

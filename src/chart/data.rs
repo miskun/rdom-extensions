@@ -1,9 +1,7 @@
 //! Chart data model: `DataPoint`, `TimeRange`, `Series`, `SeriesBuffer`.
 //!
-//! Ported from the upstream lens time-series component, decoupled from
-//! its `ColorToken`/`Theme` (now `rdom_tui::Color`). The buffer keeps
-//! points sorted by timestamp, deduplicates on equal timestamps, bounds
-//! memory, and tracks loaded ranges for lazy backfill.
+//! The buffer keeps points sorted by timestamp, deduplicates on equal
+//! timestamps, bounds memory, and tracks loaded ranges for lazy backfill.
 
 use rdom_tui::Color;
 

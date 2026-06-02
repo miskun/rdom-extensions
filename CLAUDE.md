@@ -29,10 +29,10 @@ update `CLAUDE.md` in the same change.
   rdom internals, never fork rdom code, never add a path dependency back into the rdom source tree
   (we depend on the crates.io release `rdom-tui = "0.2"`). If a component genuinely needs a new
   hook, that is a change request against rdom — not a workaround here.
-- **Port faithfully, don't reinvent.** Components originate in `../lens-k8s-tui`, which is built on
-  an older **ratatui-based** fork of rdom. Port the *algorithms* (braille rasterizer, block fills,
-  data buffers, axis/tick math, EMA); rewrite the *rendering layer* against rdom-tui's
-  `RenderContext`, and swap `ColorToken`/`Theme` for `rdom_tui::Color`/`Style`.
+- **Theme-agnostic, math separate from paint.** Components speak `rdom_tui::Color`/`Style`
+  directly — never an app-specific color-token or theme abstraction. Keep the math (braille/block
+  rasterizers, axis/tick computation, data buffers, EMA) independent of the paint layer so it's
+  unit-testable without a terminal; the thin paint step draws through rdom-tui's `RenderContext`.
 - **One component, one pattern.** A renderable component is a pure logic type (state + a
   `paint(&RenderContext)` or a model) plus a `*View` handle (`Rc<RefCell<…>>`) exposing
   `mount(dom) -> NodeId` and `with(|c| …)`. Canvas components paint via `set_paint`; the virtual

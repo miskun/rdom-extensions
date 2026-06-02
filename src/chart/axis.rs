@@ -1,7 +1,5 @@
 //! Axis utilities: "nice" tick computation and value/time formatting.
-//!
-//! Ported unchanged from the upstream lens component — pure numeric
-//! helpers with no rendering or theme coupling.
+//! Pure numeric helpers — no rendering or theme coupling.
 
 /// Compute "nice" tick values across `[min, max]`, aiming for roughly
 /// `target_count` ticks landing on 1/2/5×10ⁿ boundaries.

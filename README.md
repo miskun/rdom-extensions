@@ -38,7 +38,7 @@ substrate-first rationale.
 cargo run --example dashboard            # every component on one screen (Ctrl-C to quit)
 cargo run --example live_chart           # a time-series streaming in real time
 cargo run --example interactive_chart    # zoom/pan/scrub with keyboard + mouse
-cargo run --example timeseries_gallery   # the 7 lens demos (1-7 to switch): smooth, spiky
+cargo run --example timeseries_gallery   # 7 time-series demos (1-7 to switch): smooth, spiky
                                          # (100ms/150ms thresholds), single, dense, live,
                                          # live-spotty, empty
 ```

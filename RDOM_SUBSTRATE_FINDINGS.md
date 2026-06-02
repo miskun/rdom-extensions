@@ -123,7 +123,7 @@ repaint.
 
 This is the concrete blocker for our keyboard zoom/pan and mouse/scroll interaction (M7): our chart
 state lives behind an `Rc<RefCell>` (because the canvas paint closure must borrow it), exactly as
-the lens components and rdom's canvas docs do — but there's no first-class "my paint inputs
+this crate's components and rdom's canvas docs do — but there's no first-class "my paint inputs
 changed, repaint this canvas" call reachable from inside a listener.
 
 **Workarounds available (all unsatisfying).**

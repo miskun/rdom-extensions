@@ -4,10 +4,6 @@
 //! giving 2× horizontal and 4× vertical resolution over plain cells. Lines
 //! are rasterized with Bresenham in dot space, then flushed to a canvas
 //! [`RenderContext`] one braille glyph per cell.
-//!
-//! Ported from the upstream lens component; the only change is the paint
-//! target (ratatui `Buffer` → rdom-tui canvas `RenderContext`) and the
-//! color type (`ColorToken` → `rdom_tui::Color`).
 
 use rdom_tui::Color;
 use rdom_tui::Style;
