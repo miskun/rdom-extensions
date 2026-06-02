@@ -76,4 +76,27 @@ virtualization, sorting, column resize/reorder, selection. Largest effort; porte
 ## Review gates
 
 Per the rdom working agreement, run the Grumpy Chief Architect + Grumpy Chief Product/API passes at
-the end of each milestone before starting the next. M2 review: **pending** (run before M3).
+the end of each milestone before starting the next.
+
+### M2 review — done
+
+**Architect — strong:** correct reverse paint order (series 0 on top), bounds-checked braille
+writes, padded-range edge continuity, tidy borrow scoping around `ctx.sub`. Gate clean.
+
+**Architect — findings:**
+- (fixed) `paint_empty` used non-saturating `w/2 - msg.len()/2`; now `saturating_sub`.
+- (accepted) per-frame allocation of collected/stacked/scaled/grid — same as upstream, fine for
+  charts; revisit only if a profile shows it.
+
+**Product/API — strong:** `view.mount(dom) -> NodeId` + `view.with(|c| …)` is a clean consumer
+surface; static + streaming both covered.
+
+**Product/API — findings:**
+- (fixed) `StackMode` was exported with no setter and no effect — removed from the public surface
+  until the stacking transform lands (no marketing of unshipped work).
+- (follow-up, non-blocking) `add_series` requires an explicit `Color` while `Series::line`
+  auto-assigns from the palette — add an auto-color streaming helper for consistency.
+- (follow-up, M6) `TimeSeriesView::with` mutates but does not request a repaint; documented at the
+  API, to be ergonomized when interaction lands.
+
+No blocking findings. Cleared to start M3.

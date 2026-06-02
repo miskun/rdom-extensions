@@ -72,13 +72,8 @@ pub enum ConnectPolicy {
     // Future: Connect, Zero
 }
 
-/// Chart-level stacking mode.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub enum StackMode {
-    #[default]
-    None,
-    // Future: Stacked, Percent
-}
+// `StackMode` (None/Stacked/Percent) will land with the stacking
+// transform; not exposed until it has an effect.
 
 /// Series definition supplied by callers.
 #[derive(Clone, Debug)]

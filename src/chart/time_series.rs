@@ -336,7 +336,7 @@ impl TimeSeriesChart {
 
     fn paint_empty(&self, ctx: &mut RenderContext<'_>, w: u16, h: u16) {
         let msg = "No data";
-        let x = w / 2 - (msg.len() as u16) / 2;
+        let x = (w / 2).saturating_sub((msg.len() as u16) / 2);
         let y = h / 2;
         ctx.text(x, y, msg, Style::new().fg(MUTED));
     }

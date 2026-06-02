@@ -14,7 +14,6 @@ pub mod time_series;
 pub(crate) mod braille;
 
 pub use data::{
-    ConnectPolicy, DataPoint, Guideline, Series, SeriesStyle, StackMode, TimeRange, XAxisConfig,
-    YAxisConfig,
+    ConnectPolicy, DataPoint, Guideline, Series, SeriesStyle, TimeRange, XAxisConfig, YAxisConfig,
 };
 pub use time_series::{TimeSeriesChart, TimeSeriesView};
