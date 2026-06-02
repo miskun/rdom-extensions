@@ -87,3 +87,29 @@ fn canvas_is_made_focusable() {
     let (_view, dom, canvas) = mounted();
     assert_eq!(dom.node(canvas).get_attribute("tabindex"), Some("0"));
 }
+
+/// The interactive example focuses the chart canvas so keys work
+/// immediately. With rdom 0.3.1's `canvas:focus` exemption, that focus
+/// must NOT paint a background over the chart — the canvas stays
+/// transparent with no consumer override. (Before 0.3.1 the UA
+/// `:focus { background !important }` rule filled it gray.)
+#[test]
+fn focused_chart_canvas_keeps_transparent_background() {
+    use rdom_tui::style::{CascadeExt, Color, Stylesheet};
+    use rdom_tui::{Size, TuiNodeExt, TuiNodeMutExt, TuiStyle};
+
+    let (_view, mut dom, canvas) = mounted();
+    dom.node_mut(canvas).set_inline_style(
+        TuiStyle::new()
+            .width(Size::Fixed(40))
+            .height(Size::Fixed(10)),
+    );
+    dom.set_focused(Some(canvas));
+    dom.cascade(&Stylesheet::new()); // includes the UA sheet
+
+    assert_eq!(
+        dom.node(canvas).computed().unwrap().bg,
+        Color::Reset,
+        "a focused chart canvas must stay transparent (rdom 0.3.1 canvas:focus exemption)"
+    );
+}

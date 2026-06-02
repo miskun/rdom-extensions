@@ -15,7 +15,7 @@ readme = "README.md"
 # the public rdom-tui surface (canvas paint API, Color/Style, element
 # builders, event listeners) — no private hooks, no path dep, so this
 # crate builds standalone from any location.
-rdom-tui = "0.3"
+rdom-tui = "0.3.1"
 
 [dev-dependencies]
 crossterm = "0.28"

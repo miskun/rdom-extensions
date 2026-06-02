@@ -23,8 +23,18 @@ buffers, nice-ticks, EMA) transfer; the rendering layer is rewritten against the
 - Charts rasterize onto a `BrailleGrid` (2×4 dots/cell), then flush into a `ctx.sub(...)` rect.
 - State lives behind `Rc<RefCell<…>>` (the `*View` types) so the paint closure can borrow it and
   the app can mutate it between frames, then request a repaint.
-- `rdom-tui` is a plain crates.io dependency (**`"0.3"`** as of 2026-06-02) — no path dep, so this
-  crate builds standalone and never reaches into the rdom source tree.
+- `rdom-tui` is a plain crates.io dependency (**`"0.3.1"`** as of 2026-06-02) — no path dep, so
+  this crate builds standalone and never reaches into the rdom source tree.
+
+## 2026-06-02 — focus-gray fixed upstream (rdom 0.3.1)
+
+The interactive chart came up with an ugly gray fill behind the plot. Root cause was upstream: the
+UA `:focus { background !important }` indicator painted over the focused `<canvas>` (the example
+focuses it so keys work immediately), and it was unoverridable. Fixed in rdom **0.3.1**
+(`UA-FOCUS-OVERRIDABLE-1`): `<canvas>` is now exempt from the focus tint (web-faithful — focusing a
+canvas never touches its pixels), so the chart is clean **by default with no workaround here**.
+Bumped the dep to `0.3.1`; added `tests/render_interaction.rs::focused_chart_canvas_keeps_transparent_background`
+pinning that a focused chart canvas computes `bg = Reset`.
 
 ## 2026-06-02 — rdom 0.3.0 payoff cashed in
 
