@@ -12,16 +12,14 @@ use rdom_extensions::chart::{
 use rdom_extensions::table::{Column, VirtualTable, VirtualTableView};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};
 use rdom_tui::style::{CascadeExt, Stylesheet};
-use rdom_tui::{
-    Color, Direction, Display, Flow, NodeId, Padding, Size, TuiDom, TuiNodeMutExt, TuiStyle, Value,
-};
+use rdom_tui::{Color, Direction, NodeId, Padding, Size, TuiDom, TuiNodeMutExt, TuiStyle};
 
-/// A `display: flex` style (`Display::Block` + `Flow::Flex`) in `dir`.
+/// A `display: flex` style in `dir`, via the 0.3 convenience builders.
 fn flex(dir: Direction) -> TuiStyle {
-    let mut s = TuiStyle::new().direction(dir);
-    s.display = Some(Value::Specified(Display::Block));
-    s.flow = Some(Value::Specified(Flow::Flex));
-    s
+    match dir {
+        Direction::Row => TuiStyle::new().flex_row(),
+        Direction::Column => TuiStyle::new().flex_column(),
+    }
 }
 
 fn style(dom: &mut TuiDom, id: NodeId, s: TuiStyle) {

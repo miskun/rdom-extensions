@@ -23,10 +23,25 @@ buffers, nice-ticks, EMA) transfer; the rendering layer is rewritten against the
 - Charts rasterize onto a `BrailleGrid` (2×4 dots/cell), then flush into a `ctx.sub(...)` rect.
 - State lives behind `Rc<RefCell<…>>` (the `*View` types) so the paint closure can borrow it and
   the app can mutate it between frames, then request a repaint.
-- `rdom-tui` is a plain crates.io dependency (`"0.2"`) — no path dep, so this crate builds
-  standalone from any location and never reaches into the rdom source tree. (Was briefly a path
-  dep during the first commits; switched once the published 0.2.0 was confirmed to carry every API
-  used.)
+- `rdom-tui` is a plain crates.io dependency (**`"0.3"`** as of 2026-06-02) — no path dep, so this
+  crate builds standalone and never reaches into the rdom source tree.
+
+## 2026-06-02 — rdom 0.3.0 payoff cashed in
+
+The substrate findings this crate surfaced (`RDOM_SUBSTRATE_FINDINGS.md`) were fixed in rdom 0.3.0.
+Bumped the dependency `0.2` → `0.3` and collected the wins:
+- **Dropped the `flex()` field-poking workaround** — the examples/test now use `TuiStyle::flex_row()`
+  / `flex_column()` (0.3's `TUISTYLE-FLEX-BUILDER-1`) instead of manually setting `display`/`flow`
+  `Value` fields.
+- **Wired real chart interaction** — `TimeSeriesView::install_interaction(dom, canvas)` attaches
+  keyboard (`+`/`-` zoom, `h`/`l`/arrows pan, `0` reset), wheel-zoom, and left-drag-pan listeners.
+  Each mutates the shared chart and calls `ctx.request_redraw()` (0.3's `EVENT-REDRAW-1`) — the
+  thing that was *blocked* before (a canvas reading external `Rc<RefCell>` state couldn't trigger a
+  repaint from an event handler). New chart methods: `pan_by_fraction`, `pan_by_columns`,
+  `window_duration`. New `examples/interactive_chart.rs`. Headless test: `tests/render_interaction.rs`
+  (5 tests — dispatch synthetic keys, assert window changed + `redraw_requested`).
+- (`CANVAS-TEST-CTOR-1` / `RENDERCTX-DEDUP-1` also available now — not yet exercised here.)
+- 80 tests green; clippy + fmt clean.
 
 ## Milestones
 

@@ -20,7 +20,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use rdom_tui::runtime::builtins::canvas::{self, RenderContext};
-use rdom_tui::{Color, NodeId, Style, TuiDom};
+use rdom_tui::{Color, ListenerOptions, NodeId, Style, TuiDom, TuiNodeExt};
 
 use super::axis::{format_timestamp, format_y_value, nice_ticks};
 use super::braille::{
@@ -185,6 +185,24 @@ impl TimeSeriesChart {
         self.set_window_duration(new_duration);
     }
 
+    /// Pan by a fraction of the current window width (e.g. `-0.1` =
+    /// left by 10%). Convenience for keyboard panning.
+    pub fn pan_by_fraction(&mut self, frac: f64) {
+        self.pan(frac * self.window_duration);
+    }
+
+    /// Pan by a pixel/column delta given the plot's width in cells —
+    /// converts the drag distance to seconds. Convenience for mouse-drag
+    /// panning (positive `delta_cols` = dragged right = window moves
+    /// left, like grabbing the plot).
+    pub fn pan_by_columns(&mut self, delta_cols: i32, width: u16) {
+        if width == 0 {
+            return;
+        }
+        let time_per_col = self.window_duration / width as f64;
+        self.pan(-(delta_cols as f64) * time_per_col);
+    }
+
     /// Re-enable follow mode and snap the window to the live edge.
     pub fn reset_to_live(&mut self) {
         self.follow = true;
@@ -205,6 +223,11 @@ impl TimeSeriesChart {
     /// Whether the window is currently tracking the live edge.
     pub fn is_following(&self) -> bool {
         self.follow
+    }
+
+    /// The current visible window width, in seconds.
+    pub fn window_duration(&self) -> f64 {
+        self.window_duration
     }
 
     // ── Config ──────────────────────────────────────────────────────
@@ -650,6 +673,115 @@ impl TimeSeriesView {
     /// Borrow the chart mutably to update it (push data, tick, zoom…).
     pub fn with<R>(&self, f: impl FnOnce(&mut TimeSeriesChart) -> R) -> R {
         f(&mut self.inner.borrow_mut())
+    }
+
+    /// Wire keyboard + mouse interaction onto the mounted `<canvas>`:
+    ///
+    /// - `+` / `-` (or `=`) — zoom in / out
+    /// - `h` / `l` or `←` / `→` — pan left / right
+    /// - `0` — reset to the live edge (re-enable follow)
+    /// - mouse wheel — zoom
+    /// - left-drag — pan
+    ///
+    /// Each handler mutates the shared chart and calls
+    /// `ctx.request_redraw()` (the chart's state lives outside the DOM,
+    /// so the mutation tracker can't see it — this is exactly the
+    /// `EventCtx::request_redraw` affordance, rdom 0.3+). The canvas is
+    /// made focusable (`tabindex="0"`) so it can receive keyboard events;
+    /// focus it (click, Tab, or `dom`-level focus) for the keys to fire.
+    pub fn install_interaction(&self, dom: &mut TuiDom, canvas: NodeId) {
+        let _ = dom.node_mut(canvas).set_attribute("tabindex", "0");
+
+        // Keyboard: zoom / pan / reset.
+        let kb = self.inner.clone();
+        dom.add_event_listener(canvas, "keydown", ListenerOptions::default(), move |ctx| {
+            let Some(key) = ctx.event.detail.as_keyboard() else {
+                return;
+            };
+            let mut handled = true;
+            {
+                let mut c = kb.borrow_mut();
+                match key.key.as_str() {
+                    "+" | "=" => c.zoom(0.5),
+                    "-" => c.zoom(2.0),
+                    "h" | "ArrowLeft" => c.pan_by_fraction(-0.1),
+                    "l" | "ArrowRight" => c.pan_by_fraction(0.1),
+                    "0" => c.reset_to_live(),
+                    _ => handled = false,
+                }
+            }
+            if handled {
+                ctx.event.prevent_default();
+                ctx.request_redraw();
+            }
+        })
+        .expect("keydown listener");
+
+        // Wheel: zoom (up = in, down = out).
+        let wheel = self.inner.clone();
+        dom.add_event_listener(canvas, "wheel", ListenerOptions::default(), move |ctx| {
+            let Some(m) = ctx.event.detail.as_mouse() else {
+                return;
+            };
+            let factor = if m.delta_y < 0 { 0.8 } else { 1.25 };
+            wheel.borrow_mut().zoom(factor);
+            ctx.event.prevent_default();
+            ctx.request_redraw();
+        })
+        .expect("wheel listener");
+
+        // Left-drag: pan. `mousedown` records the anchor column,
+        // `mousemove` pans by the delta (only while dragging), `mouseup`
+        // ends the gesture.
+        let drag: Rc<std::cell::Cell<Option<i32>>> = Rc::new(std::cell::Cell::new(None));
+        let down = drag.clone();
+        dom.add_event_listener(
+            canvas,
+            "mousedown",
+            ListenerOptions::default(),
+            move |ctx| {
+                if let Some(m) = ctx.event.detail.as_mouse() {
+                    down.set(Some(m.client_x));
+                }
+            },
+        )
+        .expect("mousedown listener");
+
+        let moving = drag.clone();
+        let pan = self.inner.clone();
+        dom.add_event_listener(
+            canvas,
+            "mousemove",
+            ListenerOptions::default(),
+            move |ctx| {
+                let Some(start) = moving.get() else {
+                    return;
+                };
+                let Some(m) = ctx.event.detail.as_mouse() else {
+                    return;
+                };
+                let dx = m.client_x - start;
+                if dx == 0 {
+                    return;
+                }
+                let width = ctx
+                    .dom
+                    .node(canvas)
+                    .content_layout_rect()
+                    .map(|r| r.width)
+                    .unwrap_or(0);
+                pan.borrow_mut().pan_by_columns(dx, width);
+                moving.set(Some(m.client_x));
+                ctx.request_redraw();
+            },
+        )
+        .expect("mousemove listener");
+
+        let up = drag.clone();
+        dom.add_event_listener(canvas, "mouseup", ListenerOptions::default(), move |_ctx| {
+            up.set(None);
+        })
+        .expect("mouseup listener");
     }
 }
 

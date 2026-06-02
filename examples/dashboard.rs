@@ -23,15 +23,14 @@ use rdom_extensions::chart::{
 };
 use rdom_extensions::table::{Column, VirtualTable, VirtualTableView};
 use rdom_tui::{
-    App, Color, Direction, Display, Flow, NodeId, Padding, Size, Stylesheet, TuiDom, TuiNodeMutExt,
-    TuiStyle, Value,
+    App, Color, Direction, NodeId, Padding, Size, Stylesheet, TuiDom, TuiNodeMutExt, TuiStyle,
 };
 
 fn flex(dir: Direction) -> TuiStyle {
-    let mut s = TuiStyle::new().direction(dir);
-    s.display = Some(Value::Specified(Display::Block));
-    s.flow = Some(Value::Specified(Flow::Flex));
-    s
+    match dir {
+        Direction::Row => TuiStyle::new().flex_row(),
+        Direction::Column => TuiStyle::new().flex_column(),
+    }
 }
 
 fn style(dom: &mut TuiDom, id: NodeId, s: TuiStyle) {

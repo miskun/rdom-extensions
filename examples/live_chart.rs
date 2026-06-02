@@ -24,15 +24,11 @@ use rdom_extensions::chart::{
 };
 use rdom_extensions::palette::series_color;
 use rdom_tui::{
-    App, ControlFlow, Direction, Display, Flow, NodeId, Padding, Size, Stylesheet, TuiDom,
-    TuiNodeMutExt, TuiStyle, Value,
+    App, ControlFlow, NodeId, Padding, Size, Stylesheet, TuiDom, TuiNodeMutExt, TuiStyle,
 };
 
 fn flex_col() -> TuiStyle {
-    let mut s = TuiStyle::new().direction(Direction::Column);
-    s.display = Some(Value::Specified(Display::Block));
-    s.flow = Some(Value::Specified(Flow::Flex));
-    s
+    TuiStyle::new().flex_column()
 }
 
 fn style(dom: &mut TuiDom, id: NodeId, s: TuiStyle) {
