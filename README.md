@@ -26,10 +26,18 @@ Nothing here reaches into rdom internals, so the crate evolves independently of 
 | **Rich gauge** (`Gauge` / `GaugeView`) — linear gauge with colored value zones, label + readout | ✅ shipped |
 | **Virtual table — core** (`VirtualTable` / `VirtualTableView`) — native `<table>`, materializes only the visible row window | ✅ shipped |
 | Virtual table — rich features (sort, selection, column resize/reorder, scrollbar spacer) | ⏳ planned |
-| Interaction wiring (keyboard/mouse listeners) + runnable examples | ⏳ planned |
+| **Runnable examples** (`dashboard`, `live_chart`) | ✅ shipped |
+| Interaction wiring (keyboard zoom/pan, mouse/scroll) | ⏳ planned |
 
 See `STATE.md` for the milestone plan and `specs/DESIGN.md` (in the rdom repo) for the
 substrate-first rationale.
+
+## Try it
+
+```bash
+cargo run --example dashboard     # every component on one screen (Ctrl-C to quit)
+cargo run --example live_chart    # a time-series streaming in real time
+```
 
 ## Example
 

@@ -87,10 +87,30 @@ builtin's column sync.
 reflects total rows; sorting; row/cell selection; column resize/reorder/hide; side-loaded data
 sources; persistence callbacks. Tracked as follow-ups (candidate M7).
 
-### M6 — Interaction + examples ⏳
-- Wire keyboard/mouse listeners (`install_interaction`) so charts zoom/pan/follow from events,
-  not just programmatic calls.
-- Runnable examples driving the `App` event loop (depends on mapping the `App`/`Terminal` run API).
+### M6 — Runnable examples ✅ (done); interaction ⏳
+- `examples/dashboard.rs` — a static dashboard showing every component at once (two gauges, bar
+  chart, sparkline, time-series with legend/axes, virtual table). `cargo run --example dashboard`.
+- `examples/live_chart.rs` — a streaming time-series driven by `App::on_tick`: each idle tick
+  pushes a sample through the shared `TimeSeriesView` and calls `request_redraw`.
+  `cargo run --example live_chart`.
+- `tests/render_dashboard.rs` — headless twin of the dashboard build (cascade→layout→paint, dumps
+  the frame with `--nocapture`, asserts every component painted). The validator for the example's
+  layout.
+
+**Key layout lesson (recorded so we don't relearn it):** flex distribution reads
+`direction`/`gap`/`width`/`height` from the **computed style**, not the `ext` fields the node
+setters (`set_direction`/`set_width`/…) write. So layout for composed UIs must go through
+`TuiStyle` (inline style or a stylesheet): `display: flex` = `Display::Block` + `Flow::Flex` (set
+the public `display`/`flow` fields), then `.direction()/.gap()/.width()/.height()/.padding()`
+builders. The `ext` setters still feed accessors/other paths but are ignored by flex.
+
+**Still pending (interaction):** keyboard zoom/pan/follow on the time-series, mouse/scroll on the
+table. The blocker is ergonomic: an event listener (`TuiEventCtx`) mutating a `*View`'s external
+`Rc<RefCell>` state doesn't trip the `DirtyTracker` (no DOM mutation), so it won't repaint on its
+own. Options to design in M7: (a) the listener also touches a DOM attr on the canvas to force a
+repaint; (b) add a small `*View` helper that does that; (c) request an `AppHandle`-style redraw
+hook usable from `TuiEventCtx`. Until then, charts update via `view.with(...)` + a tick/redraw
+(as `live_chart` shows).
 
 ## Open questions / risks
 
