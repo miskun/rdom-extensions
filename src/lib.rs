@@ -20,10 +20,11 @@
 //!
 //! ## Status
 //!
-//! Milestone 1 (this commit): the charting **foundation** — data model,
-//! axis math, and the braille rasterizer. The renderable components
-//! (time-series, sparkline, bar, gauge, virtual table) land in
-//! subsequent milestones; see `STATE.md`.
+//! Shipped: time-series line chart, sparkline, bar chart, and rich gauge
+//! (all `<canvas>`-painted via a braille / block rasterizer), plus a
+//! `<table>`-based virtualized table. Interaction wiring (scroll/zoom/pan
+//! from events) and runnable examples are in progress; see `STATE.md`.
 
 pub mod chart;
 pub mod palette;
+pub mod table;

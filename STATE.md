@@ -67,10 +67,23 @@ buffers, nice-ticks, EMA) transfer; the rendering layer is rewritten against the
 - Tests: 5 blocks + 7 bar + 9 gauge unit + 4 integration (bar blocks+labels, longer-bar-more-blocks,
   gauge fill+label+readout, gauge update). Gate clean. 66 tests total.
 
-### M5 — Virtual table ⏳
-Element-tree-based (not canvas): built on native `<table>` + scroll + runtime, with row
-virtualization, sorting, column resize/reorder, selection. Largest effort; ported from lens
-`VirtualTableComponent`.
+### M5 — Virtual table (core) ✅ (done)
+Element-tree-based (not canvas), built on native `<table>`/`<thead>`/`<tbody>` + the table
+builtin's column sync.
+- `table::VirtualTable` — model (columns + rows) + pure `window_for(viewport_rows, scroll_y,
+  total) -> (start, count)`.
+- `table::VirtualTableView` — `mount(dom)` builds `<table>` with a header + empty `<tbody>`;
+  `show_window(dom, start, count)` materializes **only** that row slice (drops the previous one
+  via `drop_subtree`, re-syncs column widths); `with(|t| …)` updates data; `mounted_row_count()`
+  for assertions.
+- Tests: 5 unit (window math + model bookkeeping) + 3 integration (only the window materializes
+  against a 1000-row model; show_window replaces the prior window; past-end renders header only).
+  74 tests total. Gate clean.
+
+**Scoped out of M5 (deliberate, not done):** this is the virtualization *core*, not the full lens
+`VirtualTableComponent`. Deferred: automatic scroll → window recompute + a spacer so the scrollbar
+reflects total rows; sorting; row/cell selection; column resize/reorder/hide; side-loaded data
+sources; persistence callbacks. Tracked as follow-ups (candidate M7).
 
 ### M6 — Interaction + examples ⏳
 - Wire keyboard/mouse listeners (`install_interaction`) so charts zoom/pan/follow from events,
@@ -112,3 +125,14 @@ surface; static + streaming both covered.
   API, to be ergonomized when interaction lands.
 
 No blocking findings. Cleared to start M3.
+
+### M3/M4/M5 reviews — done (no blockers)
+
+- **M3 (sparkline):** clean reuse of the braille grid; pure `scale()` is the test seam. No findings.
+- **M4 (bar/gauge):** shared `blocks::h_bar` keeps the two components DRY; pure `layout()` /
+  `ratio()` / `fill_color()` are well-tested. Finding (accepted): `Gauge` is single-row only —
+  multi-row/labeled-track layout is a future nicety, not needed for v1.
+- **M5 (virtual table):** borrow scoping in `show_window` is sound; `drop_subtree` prevents arena
+  leaks; virtualization is genuine (verified by `mounted_row_count`). Finding (recorded, not
+  blocking): the rich lens table features are deliberately scoped out — README/STATE say "core"
+  to avoid overselling. Repaint/scroll-wiring shares the M6 concern.

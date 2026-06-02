@@ -24,7 +24,8 @@ Nothing here reaches into rdom internals, so the crate evolves independently of 
 | **Sparkline** (`Sparkline` / `SparklineView`) — compact single-series line, no chrome, auto/pinned range, NaN gaps | ✅ shipped |
 | **Bar chart** (`BarChart` / `BarChartView`) — horizontal labeled bars, eighth-block fill, auto/pinned scale, value readout | ✅ shipped |
 | **Rich gauge** (`Gauge` / `GaugeView`) — linear gauge with colored value zones, label + readout | ✅ shipped |
-| Virtual table | ⏳ planned |
+| **Virtual table — core** (`VirtualTable` / `VirtualTableView`) — native `<table>`, materializes only the visible row window | ✅ shipped |
+| Virtual table — rich features (sort, selection, column resize/reorder, scrollbar spacer) | ⏳ planned |
 | Interaction wiring (keyboard/mouse listeners) + runnable examples | ⏳ planned |
 
 See `STATE.md` for the milestone plan and `specs/DESIGN.md` (in the rdom repo) for the
