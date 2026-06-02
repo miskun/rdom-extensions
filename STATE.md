@@ -48,9 +48,13 @@ buffers, nice-ticks, EMA) transfer; the rendering layer is rewritten against the
   braille glyphs / "No data" land on the buffer). 35 tests total, all green.
 - Gate: `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test` all clean.
 
-### M3 — Sparkline ⏳
-Small single-series inline chart (a thin wrapper over the braille grid, no axes/legend). Smallest
-component; good consolidation of the canvas-paint pattern.
+### M3 — Sparkline ✅ (done)
+- `chart::sparkline` — `Sparkline` (values + color + optional pinned range; pure `scale()` +
+  `paint()`) and `SparklineView` (same `Rc<RefCell>` mount/`with` pattern). No axes/gutter/legend —
+  the whole canvas is plot area; evenly-spaced values, `NaN` gaps, braille line.
+- Tests: 6 unit (scale math: bounds, endpoints, min/max orientation, NaN gap, single-value center,
+  range override) + 2 integration (renders braille into a tiny inline canvas; streaming update).
+- Gate clean.
 
 ### M4 — Bar chart + rich gauge ⏳
 Bar chart (categorical) and a gauge richer than the native `<progress>`/`<meter>` (zones, ticks).
