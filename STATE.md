@@ -23,8 +23,10 @@ buffers, nice-ticks, EMA) transfer; the rendering layer is rewritten against the
 - Charts rasterize onto a `BrailleGrid` (2×4 dots/cell), then flush into a `ctx.sub(...)` rect.
 - State lives behind `Rc<RefCell<…>>` (the `*View` types) so the paint closure can borrow it and
   the app can mutate it between frames, then request a repaint.
-- `rdom-tui` is a path dependency during co-development; switch to a crates.io version pin before
-  publishing.
+- `rdom-tui` is a plain crates.io dependency (`"0.2"`) — no path dep, so this crate builds
+  standalone from any location and never reaches into the rdom source tree. (Was briefly a path
+  dep during the first commits; switched once the published 0.2.0 was confirmed to carry every API
+  used.)
 
 ## Milestones
 
@@ -92,7 +94,7 @@ sources; persistence callbacks. Tracked as follow-ups (candidate M7).
 
 ## Open questions / risks
 
-- **Publish form:** path-dep vs crates.io pin. Resolve before first publish.
+- **Publish form:** resolved — depends on crates.io `rdom-tui = "0.2"`, no path dep.
 - **Repaint signaling:** `TimeSeriesView::with` mutates state but does not request a repaint;
   the app must call the runtime's redraw path. M6 should document/ergonomize this.
 - **No runnable example yet** — behavior is currently proven by the headless integration test

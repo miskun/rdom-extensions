@@ -11,11 +11,11 @@ categories = ["command-line-interface", "visualization"]
 readme = "README.md"
 
 [dependencies]
-# Downstream consumer of the rdom substrate. We depend only on the
-# public rdom-tui surface (canvas paint API, Color/Style, element
-# builders, event listeners) — no private hooks. Path dep during
-# co-development; swap to the crates.io version pin before publish.
-rdom-tui = { path = "../rdom/crates/rdom-tui", version = "0.2" }
+# Downstream consumer of the published rdom substrate. We depend only on
+# the public rdom-tui surface (canvas paint API, Color/Style, element
+# builders, event listeners) — no private hooks, no path dep, so this
+# crate builds standalone from any location.
+rdom-tui = "0.2"
 
 [dev-dependencies]
 crossterm = "0.28"
