@@ -660,11 +660,19 @@ impl TimeSeriesView {
     /// (e.g. `dom.node_mut(id).set_width(Size::Flex(1))`).
     pub fn mount(&self, dom: &mut TuiDom) -> NodeId {
         let id = dom.create_element("canvas");
+        self.attach(dom, id);
+        id
+    }
+
+    /// Re-point an existing `<canvas>`'s paint callback at this view.
+    /// Lets a host swap which chart a canvas shows *without* recreating
+    /// the node — a presentation-only change (no detach, no focus
+    /// change), safe to call from inside an event handler.
+    pub fn attach(&self, dom: &mut TuiDom, canvas: NodeId) {
         let inner = self.inner.clone();
-        canvas::set_paint(dom, id, move |_dom, ctx| {
+        canvas::set_paint(dom, canvas, move |_dom, ctx| {
             inner.borrow().paint(ctx);
         });
-        id
     }
 
     /// Borrow the chart mutably to update it (push data, tick, zoom…).

@@ -227,7 +227,6 @@ struct Gallery {
     view: TimeSeriesView,
     live: Live,
     canvas: NodeId,
-    container: NodeId,
     title_text: NodeId,
     start: Instant,
     next_b: f64,
@@ -243,22 +242,20 @@ fn title_str(index: usize) -> String {
 }
 
 impl Gallery {
-    /// Tear down the current chart canvas and mount demo `index`.
+    /// Switch to demo `index` by re-pointing the existing canvas's paint
+    /// at the new view — no node drop / remount / focus change, so it's
+    /// safe to call from inside the keydown handler (dropping the focused
+    /// canvas mid-dispatch would fire re-entrant blur/focusout and crash
+    /// the loop).
     fn switch(&mut self, dom: &mut TuiDom, index: usize) {
-        let _ = dom.drop_subtree(self.canvas);
         let (view, live) = build(index);
-        let canvas = view.mount(dom);
-        dom.node_mut(canvas)
-            .set_inline_style(TuiStyle::new().width(Size::Flex(1)).height(Size::Flex(1)));
-        dom.append_child(self.container, canvas).unwrap();
-        dom.set_focused(Some(canvas));
+        view.attach(dom, self.canvas);
         let _ = dom
             .node_mut(self.title_text)
             .set_node_value(&title_str(index));
         self.index = index;
         self.view = view;
         self.live = live;
-        self.canvas = canvas;
         self.start = Instant::now();
         self.next_b = 0.0;
         self.drag = None;
@@ -348,7 +345,6 @@ fn main() -> io::Result<()> {
         view,
         live,
         canvas,
-        container,
         title_text,
         start: Instant::now(),
         next_b: 0.0,
