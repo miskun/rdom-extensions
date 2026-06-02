@@ -22,7 +22,8 @@ Nothing here reaches into rdom internals, so the crate evolves independently of 
 | Charting foundation — data model, axis math, braille rasterizer | ✅ shipped |
 | **Time-series line chart** (`TimeSeriesChart` / `TimeSeriesView`) — static + streaming, windowing, follow, zoom/pan, smoothing, guidelines, legend, axes | ✅ shipped |
 | **Sparkline** (`Sparkline` / `SparklineView`) — compact single-series line, no chrome, auto/pinned range, NaN gaps | ✅ shipped |
-| Bar chart / rich gauge | ⏳ planned |
+| **Bar chart** (`BarChart` / `BarChartView`) — horizontal labeled bars, eighth-block fill, auto/pinned scale, value readout | ✅ shipped |
+| **Rich gauge** (`Gauge` / `GaugeView`) — linear gauge with colored value zones, label + readout | ✅ shipped |
 | Virtual table | ⏳ planned |
 | Interaction wiring (keyboard/mouse listeners) + runnable examples | ⏳ planned |
 

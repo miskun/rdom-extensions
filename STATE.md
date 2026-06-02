@@ -56,8 +56,16 @@ buffers, nice-ticks, EMA) transfer; the rendering layer is rewritten against the
   range override) + 2 integration (renders braille into a tiny inline canvas; streaming update).
 - Gate clean.
 
-### M4 — Bar chart + rich gauge ⏳
-Bar chart (categorical) and a gauge richer than the native `<progress>`/`<meter>` (zones, ticks).
+### M4 — Bar chart + rich gauge ✅ (done)
+- `chart::blocks` — `h_bar(width, ratio)` eighth-block horizontal fill (sub-cell precision);
+  pure, tested (full/empty/half/fractional/exact-width invariant).
+- `chart::bar` — `BarChart` (horizontal labeled bars; auto/pinned max; optional value readout;
+  per-bar or palette color; pure `layout()` partitioning) + `Bar` + `BarChartView`.
+- `chart::gauge` — `Gauge` (linear gauge richer than native `<meter>`: fill colored by which
+  `GaugeZone` the value lands in; optional label + readout; pure `ratio()`/`fill_color()`) +
+  `GaugeZone` + `GaugeView`.
+- Tests: 5 blocks + 7 bar + 9 gauge unit + 4 integration (bar blocks+labels, longer-bar-more-blocks,
+  gauge fill+label+readout, gauge update). Gate clean. 66 tests total.
 
 ### M5 — Virtual table ⏳
 Element-tree-based (not canvas): built on native `<table>` + scroll + runtime, with row
