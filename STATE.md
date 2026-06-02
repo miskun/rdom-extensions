@@ -112,6 +112,14 @@ repaint; (b) add a small `*View` helper that does that; (c) request an `AppHandl
 hook usable from `TuiEventCtx`. Until then, charts update via `view.with(...)` + a tick/redraw
 (as `live_chart` shows).
 
+## Substrate findings (for the rdom side)
+
+`RDOM_SUBSTRATE_FINDINGS.md` collects friction / web-platform divergences / workarounds hit while
+building on `rdom-tui 0.2`, for the rdom maintainer to triage. Top two: **(1)** geometry node
+setters (`set_width`/`set_direction`/…) are silently ignored by flex layout — layout must go through
+`TuiStyle`; **(4)** event listeners can't request a repaint when paint inputs live outside the DOM,
+which blocks interactive canvas components (M7).
+
 ## Open questions / risks
 
 - **Publish form:** resolved — depends on crates.io `rdom-tui = "0.2"`, no path dep.
