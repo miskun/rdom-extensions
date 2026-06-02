@@ -19,10 +19,8 @@
 use std::io;
 use std::time::Instant;
 
-use rdom_extensions::chart::{
-    ConnectPolicy, DataPoint, SeriesStyle, TimeSeriesChart, TimeSeriesView,
-};
-use rdom_extensions::palette::series_color;
+use rdom_charts::palette::series_color;
+use rdom_charts::{ConnectPolicy, DataPoint, SeriesStyle, TimeSeriesChart, TimeSeriesView};
 use rdom_tui::{
     App, ControlFlow, NodeId, Padding, Size, Stylesheet, TuiDom, TuiNodeMutExt, TuiStyle,
 };

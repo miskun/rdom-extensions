@@ -20,7 +20,7 @@
 
 use std::io;
 
-use rdom_extensions::chart::{DataPoint, Series, TimeSeriesChart, TimeSeriesView};
+use rdom_charts::{DataPoint, Series, TimeSeriesChart, TimeSeriesView};
 use rdom_tui::{App, NodeId, Padding, Size, Stylesheet, TuiDom, TuiNodeMutExt, TuiStyle};
 
 fn style(dom: &mut TuiDom, id: NodeId, s: TuiStyle) {

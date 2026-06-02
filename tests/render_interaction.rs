@@ -2,7 +2,7 @@
 //! mutate the chart and request a repaint (rdom 0.3 `request_redraw`).
 //! Driven headlessly by dispatching synthetic keyboard events.
 
-use rdom_extensions::chart::{TimeSeriesChart, TimeSeriesView};
+use rdom_charts::{TimeSeriesChart, TimeSeriesView};
 use rdom_tui::{Event, EventDetail, KeyboardDetail, KeyboardModifiers, TuiDom};
 
 fn keydown(key: &str) -> Event {

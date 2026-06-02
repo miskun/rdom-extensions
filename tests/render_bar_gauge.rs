@@ -1,7 +1,7 @@
 //! Integration tests: bar chart and gauge paint block glyphs / labels
 //! through the real rdom-tui render pipeline (headless).
 
-use rdom_extensions::chart::{Bar, BarChart, BarChartView, Gauge, GaugeView, GaugeZone};
+use rdom_charts::{Bar, BarChart, BarChartView, Gauge, GaugeView, GaugeZone};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};
 use rdom_tui::style::{CascadeExt, Stylesheet, TuiStyle};
 use rdom_tui::{Color, Size, TuiDom};

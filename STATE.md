@@ -1,12 +1,18 @@
-# rdom-extensions — Project State
+# rdom-charts — Project State
 
-Living journal for the optional data-visualization crate built on top of rdom.
+Living journal for the terminal charts crate built on top of rdom.
+
+> **Crate split (2026-06-02).** This crate was originally `rdom-extensions` and also held a
+> virtualized table. The table was a different mechanism (element-tree, not canvas) with its own
+> roadmap, so it was extracted to the **`rdom-virtualtable`** crate (its own repo,
+> `miskun/rdom-virtualtable`) and this crate was renamed **`rdom-charts`** (charts only). The
+> `M5 — Virtual table` milestone and the dashboard's old "pods" panel below are pre-split history.
 
 ## Thesis
 
 The rdom workspace ships a substrate (DOM + cascade + layout + paint + runtime) and native HTML
 elements only — **zero opinionated components**, by an explicit non-negotiable rule in its
-`CLAUDE.md` / `specs/DESIGN.md`. Data-viz components (charts, sparklines, gauges, virtual tables)
+`CLAUDE.md` / `specs/DESIGN.md`. Chart components (time-series, sparkline, bar, gauge)
 are opinionated components, so they live here as a **downstream consumer crate**, not in the rdom
 publish set. We build strictly on `rdom-tui`'s public API (canvas paint, cascade, layout, event
 listeners) and never touch rdom internals.
@@ -111,8 +117,8 @@ reflects total rows; sorting; row/cell selection; column resize/reorder/hide; si
 sources; persistence callbacks. Tracked as follow-ups (candidate M7).
 
 ### M6 — Runnable examples ✅ (done); interaction ⏳
-- `examples/dashboard.rs` — a static dashboard showing every component at once (two gauges, bar
-  chart, sparkline, time-series with legend/axes, virtual table). `cargo run --example dashboard`.
+- `examples/dashboard.rs` — a static dashboard showing the chart components at once (two gauges,
+  bar chart, sparkline, time-series with legend/axes). `cargo run --example dashboard`.
 - `examples/live_chart.rs` — a streaming time-series driven by `App::on_tick`: each idle tick
   pushes a sample through the shared `TimeSeriesView` and calls `request_redraw`.
   `cargo run --example live_chart`.
@@ -163,11 +169,10 @@ demoed. Now demoed (Spiky) + pinned headless in `tests/render_ts_demos.rs` (asse
   `SeriesStyle::Area` / `StepLine` (area fill, step charts), `ConnectPolicy::Connect` / `Zero`
   (bridge gaps instead of breaking), `StackMode` (stacked / percent). Optional enhancements; no
   consumer needs them yet.
-- **Virtual table rich features** (scoped out of M5): sorting, row/cell selection, column
-  resize/reorder/hide, a scrollbar spacer + automatic scroll→window recompute, side-loaded data,
-  persistence callbacks. The biggest gap toward a full-featured virtual table. Candidate next milestone.
-- **Other component types not built:** `KeyValueList`, `Markdown` (if broader parity is
-  ever wanted — out of scope so far; this crate is charts + table).
+- **Virtual table rich features** — moved out of this crate; tracked in the `rdom-virtualtable`
+  crate (sorting, selection, column resize/reorder, scrollbar spacer + auto scroll→window, etc.).
+- **Other component types not built:** `KeyValueList`, `Markdown` (would each be their own crate if
+  ever wanted — out of scope; this crate is charts only).
 - **Minor API:** `add_series` requires an explicit `Color` while `Series::line` auto-assigns from
   the palette — add an auto-color streaming helper for symmetry.
 

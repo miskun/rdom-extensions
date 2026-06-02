@@ -1,13 +1,14 @@
-# rdom-extensions Agent Guide
+# rdom-charts Agent Guide
 
 This file defines how AI agents (Claude Code, Codex, Cursor, Aider, and anything honoring the
 [agents.md](https://agents.md) convention) work in this repository. `AGENTS.md` at the repo root is
 a symlink to this file — edit `CLAUDE.md`; `AGENTS.md` follows automatically.
 
-`rdom-extensions` provides optional **data-visualization components** (charts, sparklines, gauges,
-virtual tables) for [rdom](https://github.com/miskun/rdom), the browser-faithful DOM for terminal
-applications. It is a **downstream consumer** of the rdom substrate, deliberately kept out of the
-rdom workspace because rdom ships native HTML elements and *zero opinionated components* by design.
+`rdom-charts` provides terminal **chart components** (time-series, sparkline, bar, gauge) for
+[rdom](https://github.com/miskun/rdom), the browser-faithful DOM for terminal applications. It is a
+**downstream consumer** of the rdom substrate, deliberately kept out of the rdom workspace because
+rdom ships native HTML elements and *zero opinionated components* by design. (The virtualized table
+lives in the sibling `rdom-virtualtable` crate — a different mechanism, its own repo.)
 
 Keep this file current. If the project makes a durable process, architecture, or quality decision,
 update `CLAUDE.md` in the same change.
@@ -24,20 +25,19 @@ update `CLAUDE.md` in the same change.
 ## Non-Negotiable Project Principles
 
 - **Public API only.** Build strictly on `rdom-tui`'s published public surface: the `<canvas>`
-  paint API (`canvas::set_paint` + `RenderContext`), element + text builders, the cascade, the
-  native `<table>` family (`table::size_columns`), and runtime event listeners. Never reach into
-  rdom internals, never fork rdom code, never add a path dependency back into the rdom source tree
-  (we depend on the crates.io release `rdom-tui = "0.2"`). If a component genuinely needs a new
-  hook, that is a change request against rdom — not a workaround here.
+  paint API (`canvas::set_paint` + `RenderContext`), element + text builders, the cascade, and
+  runtime event listeners. Never reach into rdom internals, never fork rdom code, never add a path
+  dependency back into the rdom source tree (we depend on the crates.io release `rdom-tui = "0.3"`).
+  If a component genuinely needs a new hook, that is a change request against rdom — not a
+  workaround here.
 - **Theme-agnostic, math separate from paint.** Components speak `rdom_tui::Color`/`Style`
   directly — never an app-specific color-token or theme abstraction. Keep the math (braille/block
   rasterizers, axis/tick computation, data buffers, EMA) independent of the paint layer so it's
   unit-testable without a terminal; the thin paint step draws through rdom-tui's `RenderContext`.
-- **One component, one pattern.** A renderable component is a pure logic type (state + a
-  `paint(&RenderContext)` or a model) plus a `*View` handle (`Rc<RefCell<…>>`) exposing
-  `mount(dom) -> NodeId` and `with(|c| …)`. Canvas components paint via `set_paint`; the virtual
-  table materializes a `<table>` subtree. State lives behind the `Rc<RefCell>` so the paint closure
-  borrows it and the app mutates it between frames.
+- **One component, one pattern.** A chart is a pure logic type (state + `paint(&RenderContext)`)
+  plus a `*View` handle (`Rc<RefCell<…>>`) exposing `mount(dom) -> NodeId` and `with(|c| …)`. The
+  canvas paints via `set_paint`; state lives behind the `Rc<RefCell>` so the paint closure borrows
+  it and the app mutates it between frames, then requests a repaint (`ctx.request_redraw()`).
 - **No opinionated frameworks.** This crate ships composable visualization primitives, not an
   application framework. Higher-level dashboards/app shells belong in *their* downstream projects.
 

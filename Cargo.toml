@@ -1,21 +1,16 @@
 [package]
-name = "rdom-extensions"
+name = "rdom-charts"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 license = "MIT"
-description = "Optional data-visualization components (charts, sparklines, gauges, virtual tables) built on top of the rdom terminal DOM."
-repository = "https://github.com/miskun/rdom-extensions"
-keywords = ["tui", "dom", "chart", "dataviz", "terminal"]
+description = "Terminal charts for rdom — time-series, sparkline, bar, and gauge, braille/block-rasterized onto a <canvas>."
+repository = "https://github.com/miskun/rdom-charts"
+keywords = ["tui", "chart", "dataviz", "terminal", "braille"]
 categories = ["command-line-interface", "visualization"]
 readme = "README.md"
 
 [dependencies]
-# Downstream consumer of the published rdom substrate. We depend only on
-# the public rdom-tui surface (canvas paint API, Color/Style, element
-# builders, event listeners) — no private hooks, no path dep, so this
-# crate builds standalone from any location.
-rdom-tui = "0.3.2"
-
-[dev-dependencies]
-crossterm = "0.28"
+# Public rdom-tui surface only (canvas paint API, Color/Style, element
+# builders, event listeners). No path dep, no private hooks.
+rdom-tui = "0.3"

@@ -2,7 +2,7 @@
 //! braille glyphs through the real rdom-tui cascade → layout → paint
 //! pipeline (headless, no terminal).
 
-use rdom_extensions::chart::{DataPoint, Series, TimeSeriesChart, TimeSeriesView};
+use rdom_charts::{DataPoint, Series, TimeSeriesChart, TimeSeriesView};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};
 use rdom_tui::style::{CascadeExt, Stylesheet, TuiStyle};
 use rdom_tui::{Size, TuiDom};
@@ -118,9 +118,9 @@ fn streaming_view_updates_through_handle() {
     view.with(|c| {
         c.add_series(
             "live",
-            rdom_extensions::palette::series_color(0),
-            rdom_extensions::chart::SeriesStyle::Line,
-            rdom_extensions::chart::ConnectPolicy::Gap,
+            rdom_charts::palette::series_color(0),
+            rdom_charts::SeriesStyle::Line,
+            rdom_charts::ConnectPolicy::Gap,
         );
         for i in 0..60 {
             c.push_points(

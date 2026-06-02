@@ -1,6 +1,6 @@
 //! Color palette for data-visualization components.
 //!
-//! rdom-extensions is theme-agnostic: it speaks `rdom_tui::Color` directly.
+//! rdom-charts is theme-agnostic: it speaks `rdom_tui::Color` directly.
 //! Callers who want their own colors pass explicit `Color`s; callers who
 //! don't get an auto-assigned series color from [`series_color`].
 //!

@@ -1,7 +1,7 @@
 //! Integration test: a `SparklineView` mounted on a `<canvas>` paints
 //! braille glyphs through the real rdom-tui render pipeline (headless).
 
-use rdom_extensions::chart::{Sparkline, SparklineView};
+use rdom_charts::{Sparkline, SparklineView};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};
 use rdom_tui::style::{CascadeExt, Stylesheet, TuiStyle};
 use rdom_tui::{Size, TuiDom};

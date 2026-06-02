@@ -3,7 +3,7 @@
 //! (the `100ms` / `150ms` reference lines), plus smoothing and the empty
 //! state.
 
-use rdom_extensions::chart::{DataPoint, Guideline, Series, TimeSeriesChart, TimeSeriesView};
+use rdom_charts::{DataPoint, Guideline, Series, TimeSeriesChart, TimeSeriesView};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};
 use rdom_tui::style::{CascadeExt, Stylesheet};
 use rdom_tui::{Color, Size, TuiDom, TuiNodeMutExt, TuiStyle};
@@ -87,7 +87,7 @@ fn spiky_demo_renders_threshold_lines() {
 /// percent-formatted Y axis.
 #[test]
 fn smooth_demo_renders() {
-    use rdom_extensions::chart::YAxisConfig;
+    use rdom_charts::YAxisConfig;
     let mk = |freq: f64, off: f64| -> Vec<DataPoint> {
         (0..120)
             .map(|i| {
@@ -136,7 +136,7 @@ fn empty_demo_renders_no_data() {
 /// "Live": streaming construction with pushed points renders.
 #[test]
 fn live_demo_streams() {
-    use rdom_extensions::chart::{ConnectPolicy, SeriesStyle};
+    use rdom_charts::{ConnectPolicy, SeriesStyle};
     let view = TimeSeriesView::new(TimeSeriesChart::new(60.0));
     view.with(|c| {
         c.add_series(

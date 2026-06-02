@@ -18,7 +18,7 @@ use std::io;
 use std::rc::Rc;
 use std::time::Instant;
 
-use rdom_extensions::chart::{
+use rdom_charts::{
     ConnectPolicy, DataPoint, Guideline, Series, SeriesStyle, TimeSeriesChart, TimeSeriesView,
     YAxisConfig,
 };

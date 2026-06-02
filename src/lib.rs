@@ -1,30 +1,39 @@
-//! # rdom-extensions
+//! # rdom-charts
 //!
-//! Optional data-visualization components for [rdom](https://github.com/miskun/rdom),
-//! the browser-faithful DOM for terminal applications.
+//! Terminal charts for [rdom](https://github.com/miskun/rdom), the
+//! browser-faithful DOM for terminal applications: a time-series line
+//! chart, a sparkline, a bar chart, and a rich gauge.
 //!
-//! This crate is a **downstream consumer** of the rdom substrate, not
-//! part of it. The core rdom workspace deliberately ships only native
-//! HTML element behaviors and zero opinionated components; charts,
-//! sparklines, gauges, and virtualized tables are exactly the kind of
-//! higher-level components that belong outside that publish set. They
-//! live here, built strictly on rdom-tui's public API:
+//! Each chart paints onto a `<canvas>` element through rdom-tui's public
+//! API — sub-cell rasterized (a 2×4 **braille** dot grid for lines, eighth
+//! **block** glyphs for bars) — and never reaches into rdom internals, so
+//! the crate evolves independently of the substrate. A `*View` handle
+//! mounts a chart on a canvas and lets the app update it between frames:
 //!
-//! - the `<canvas>` paint API (`canvas::set_paint` + `RenderContext`)
-//!   for pixel-style drawing (charts use a braille sub-cell grid),
-//! - element builders + the cascade for layout and color,
-//! - the runtime event listeners for interaction (zoom, pan, hover).
+//! ```no_run
+//! use rdom_charts::{Series, DataPoint, TimeSeriesChart, TimeSeriesView};
+//! use rdom_tui::TuiDom;
 //!
-//! Nothing here reaches into rdom internals, so the crate can evolve
-//! independently of the substrate.
+//! let chart = TimeSeriesChart::new_static(vec![Series::line(
+//!     "cpu",
+//!     (0..120).map(|i| DataPoint::new(i as f64, (i as f64 * 0.1).sin() * 40.0 + 50.0)).collect(),
+//! )]);
+//! let view = TimeSeriesView::new(chart);
+//! let mut dom = TuiDom::new();
+//! let canvas = view.mount(&mut dom); // a <canvas> NodeId — append + size it
+//! # let _ = canvas;
+//! ```
 //!
-//! ## Status
-//!
-//! Shipped: time-series line chart, sparkline, bar chart, and rich gauge
-//! (all `<canvas>`-painted via a braille / block rasterizer), plus a
-//! `<table>`-based virtualized table. Interaction wiring (scroll/zoom/pan
-//! from events) and runnable examples are in progress; see `STATE.md`.
+//! Components: [`TimeSeriesChart`] / [`TimeSeriesView`] (with [`Guideline`]
+//! threshold lines, EMA smoothing, follow/zoom/pan), [`Sparkline`],
+//! [`BarChart`], [`Gauge`] (+ [`GaugeZone`]). See the `examples/` for
+//! runnable demos.
 
-pub mod chart;
+mod chart;
 pub mod palette;
-pub mod table;
+
+pub use chart::{
+    Bar, BarChart, BarChartView, ConnectPolicy, DataPoint, Gauge, GaugeView, GaugeZone, Guideline,
+    Series, SeriesStyle, Sparkline, SparklineView, TimeRange, TimeSeriesChart, TimeSeriesView,
+    XAxisConfig, YAxisConfig,
+};

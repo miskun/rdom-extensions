@@ -1,4 +1,4 @@
-//! A static dashboard showing every rdom-extensions component at once.
+//! A static dashboard showing every rdom-charts component at once.
 //!
 //! Run it:
 //!
@@ -17,11 +17,10 @@
 
 use std::io;
 
-use rdom_extensions::chart::{
+use rdom_charts::{
     Bar, BarChart, BarChartView, DataPoint, Gauge, GaugeView, GaugeZone, Series, Sparkline,
     SparklineView, TimeSeriesChart, TimeSeriesView,
 };
-use rdom_extensions::table::{Column, VirtualTable, VirtualTableView};
 use rdom_tui::{
     App, Color, Direction, NodeId, Padding, Size, Stylesheet, TuiDom, TuiNodeMutExt, TuiStyle,
 };
@@ -61,11 +60,7 @@ fn build(dom: &mut TuiDom) {
     );
     dom.append_child(root, container).unwrap();
 
-    label(
-        dom,
-        container,
-        "rdom-extensions — dashboard   (Ctrl-C to quit)",
-    );
+    label(dom, container, "rdom-charts — dashboard   (Ctrl-C to quit)");
 
     // Gauges.
     let gauges = dom.create_element("div");
@@ -160,30 +155,6 @@ fn build(dom: &mut TuiDom) {
         TuiStyle::new().width(Size::Flex(1)).height(Size::Flex(1)),
     );
     dom.append_child(container, ts).unwrap();
-
-    // Virtual table.
-    label(dom, container, "pods");
-    let mut model = VirtualTable::new(vec![
-        Column::new("name"),
-        Column::new("status"),
-        Column::new("restarts"),
-    ]);
-    model.set_rows(
-        (0..200)
-            .map(|i| {
-                vec![
-                    format!("pod-{i:03}"),
-                    if i % 7 == 0 { "Pending" } else { "Running" }.to_string(),
-                    format!("{}", i % 4),
-                ]
-            })
-            .collect(),
-    );
-    let table_view = VirtualTableView::new(model);
-    let table = table_view.mount(dom);
-    style(dom, table, TuiStyle::new().height(Size::Fixed(5)));
-    dom.append_child(container, table).unwrap();
-    table_view.show_window(dom, 0, 4);
 }
 
 fn main() -> io::Result<()> {

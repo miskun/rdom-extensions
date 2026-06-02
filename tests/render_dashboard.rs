@@ -5,11 +5,10 @@
 //! the `ext` node setters are NOT read by flex distribution). Run with
 //! `--nocapture` to eyeball the frame.
 
-use rdom_extensions::chart::{
+use rdom_charts::{
     Bar, BarChart, BarChartView, DataPoint, Gauge, GaugeView, GaugeZone, Series, Sparkline,
     SparklineView, TimeSeriesChart, TimeSeriesView,
 };
-use rdom_extensions::table::{Column, VirtualTable, VirtualTableView};
 use rdom_tui::render::{Buffer, LayoutExt, PaintExt, Rect};
 use rdom_tui::style::{CascadeExt, Stylesheet};
 use rdom_tui::{Color, Direction, NodeId, Padding, Size, TuiDom, TuiNodeMutExt, TuiStyle};
@@ -52,7 +51,7 @@ pub fn build_dashboard(dom: &mut TuiDom) {
     );
     dom.append_child(root, container).unwrap();
 
-    label(dom, container, "rdom-extensions — dashboard");
+    label(dom, container, "rdom-charts — dashboard");
 
     // Two gauges side by side.
     let gauges = dom.create_element("div");
@@ -147,33 +146,6 @@ pub fn build_dashboard(dom: &mut TuiDom) {
         TuiStyle::new().width(Size::Flex(1)).height(Size::Flex(1)),
     );
     dom.append_child(container, ts).unwrap();
-
-    // A small virtual table at the bottom.
-    label(dom, container, "pods");
-    let table_model = {
-        let mut t = VirtualTable::new(vec![
-            Column::new("name"),
-            Column::new("status"),
-            Column::new("restarts"),
-        ]);
-        t.set_rows(
-            (0..200)
-                .map(|i| {
-                    vec![
-                        format!("pod-{i:03}"),
-                        if i % 7 == 0 { "Pending" } else { "Running" }.to_string(),
-                        format!("{}", i % 4),
-                    ]
-                })
-                .collect(),
-        );
-        t
-    };
-    let table_view = VirtualTableView::new(table_model);
-    let table = table_view.mount(dom);
-    style(dom, table, TuiStyle::new().height(Size::Fixed(5)));
-    dom.append_child(container, table).unwrap();
-    table_view.show_window(dom, 0, 4);
 }
 
 fn dump(buf: &Buffer) -> String {
@@ -216,6 +188,4 @@ fn dashboard_lays_out_and_paints() {
         "braille from sparkline / time-series"
     );
     assert!(text.contains("p50") && text.contains("p99"), "ts legend");
-    assert!(text.contains("status"), "table header");
-    assert!(text.contains("pod-000"), "table row");
 }

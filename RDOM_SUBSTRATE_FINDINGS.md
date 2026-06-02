@@ -1,7 +1,7 @@
-# rdom Substrate Findings — from building rdom-extensions
+# rdom Substrate Findings — from building rdom-charts
 
 Friction, divergences, and workarounds encountered while building the data-visualization
-components (`rdom-extensions`) on top of the **published `rdom-tui 0.2.0`** substrate. Written for
+components (`rdom-charts`) on top of the **published `rdom-tui 0.2.0`** substrate. Written for
 the rdom maintainer to triage on the rdom side.
 
 Each item states **what we expected** (referencing the web platform where relevant), **what rdom
