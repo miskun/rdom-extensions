@@ -13,4 +13,4 @@ readme = "README.md"
 [dependencies]
 # Public rdom-tui surface only (canvas paint API, Color/Style, element
 # builders, event listeners). No path dep, no private hooks.
-rdom-tui = "0.3"
+rdom-tui = "0.3.4"  # 0.3.4+: focus tint is control-scoped, so a focused <canvas> stays transparent

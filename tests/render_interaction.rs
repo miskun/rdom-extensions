@@ -89,10 +89,12 @@ fn canvas_is_made_focusable() {
 }
 
 /// The interactive example focuses the chart canvas so keys work
-/// immediately. With rdom 0.3.1's `canvas:focus` exemption, that focus
-/// must NOT paint a background over the chart — the canvas stays
-/// transparent with no consumer override. (Before 0.3.1 the UA
-/// `:focus { background !important }` rule filled it gray.)
+/// immediately. That focus must NOT paint a background over the chart — the
+/// canvas stays transparent with no consumer override. rdom 0.3.4 scopes the
+/// UA focus tint to interactive controls, so a `<canvas>` (a replaced/content
+/// element the app paints) is never tinted. (Earlier: 0.3.1 carried an
+/// explicit `canvas:focus` exemption; 0.3.0 filled it gray via the generic
+/// `:focus` tint.)
 #[test]
 fn focused_chart_canvas_keeps_transparent_background() {
     use rdom_tui::style::{CascadeExt, Color, Stylesheet};
@@ -110,6 +112,6 @@ fn focused_chart_canvas_keeps_transparent_background() {
     assert_eq!(
         dom.node(canvas).computed().unwrap().bg,
         Color::Reset,
-        "a focused chart canvas must stay transparent (rdom 0.3.1 canvas:focus exemption)"
+        "a focused chart canvas must stay transparent (rdom 0.3.4 control-scoped focus tint)"
     );
 }

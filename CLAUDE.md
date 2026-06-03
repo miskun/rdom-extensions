@@ -27,7 +27,7 @@ update `CLAUDE.md` in the same change.
 - **Public API only.** Build strictly on `rdom-tui`'s published public surface: the `<canvas>`
   paint API (`canvas::set_paint` + `RenderContext`), element + text builders, the cascade, and
   runtime event listeners. Never reach into rdom internals, never fork rdom code, never add a path
-  dependency back into the rdom source tree (we depend on the crates.io release `rdom-tui = "0.3"`).
+  dependency back into the rdom source tree (we depend on the crates.io release `rdom-tui = "0.3.4"`).
   If a component genuinely needs a new hook, that is a change request against rdom — not a
   workaround here.
 - **Theme-agnostic, math separate from paint.** Components speak `rdom_tui::Color`/`Style`

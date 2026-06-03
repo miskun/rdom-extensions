@@ -27,8 +27,17 @@ independent of the paint layer so it's unit-testable; the thin paint step draws 
 - Charts rasterize onto a `BrailleGrid` (2×4 dots/cell), then flush into a `ctx.sub(...)` rect.
 - State lives behind `Rc<RefCell<…>>` (the `*View` types) so the paint closure can borrow it and
   the app can mutate it between frames, then request a repaint.
-- `rdom-tui` is a plain crates.io dependency (**`"0.3.1"`** as of 2026-06-02) — no path dep, so
+- `rdom-tui` is a plain crates.io dependency (**`"0.3.4"`** as of 2026-06-03) — no path dep, so
   this crate builds standalone and never reaches into the rdom source tree.
+
+## 2026-06-03 — bumped to rdom-tui 0.3.4 (focus vocabulary)
+
+rdom 0.3.4 ships `FOCUS-VOCAB-1`: the UA focus tint is now scoped to interactive controls. A
+focused `<canvas>` stays transparent the same as before — but now because it isn't a control, not
+via the explicit 0.3.1 `canvas:focus` exemption (which 0.3.4 removed). No code change needed here
+(this crate never carried a focus workaround — rdom's UA handled it); refreshed the comment on
+`focused_chart_canvas_keeps_transparent_background` to reference the 0.3.4 mechanism. Bumped the dep
+`"0.3" → "0.3.4"`. The chart canvas focus story is unchanged: clean by default, no workaround.
 
 ## 2026-06-02 — focus-gray fixed upstream (rdom 0.3.1)
 
@@ -178,7 +187,7 @@ demoed. Now demoed (Spiky) + pinned headless in `tests/render_ts_demos.rs` (asse
 
 ## Resolved (was "open questions")
 
-- **Publish form:** crates.io `rdom-tui = "0.3.1"`, no path dep.
+- **Publish form:** crates.io `rdom-tui = "0.3.4"`, no path dep.
 - **Repaint signaling:** resolved in rdom 0.3.0 (`EventCtx::request_redraw`) + wired into the
   components' interaction.
 - **Runnable examples:** shipped — `dashboard`, `live_chart`, `interactive_chart`,

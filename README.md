@@ -14,7 +14,7 @@ smooth in a cell grid. Nothing reaches into rdom internals.
 ```toml
 [dependencies]
 rdom-charts = "0.1"
-rdom-tui = "0.3"
+rdom-tui = "0.3.4"
 ```
 
 ## Try it
