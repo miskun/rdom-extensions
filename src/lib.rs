@@ -29,6 +29,8 @@
 //! [`BarChart`], [`Gauge`] (+ [`GaugeZone`]). See the `examples/` for
 //! runnable demos.
 
+#![deny(missing_docs)]
+
 mod chart;
 pub mod palette;
 

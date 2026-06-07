@@ -9,6 +9,17 @@ repository = "https://github.com/miskun/rdom-charts"
 keywords = ["tui", "chart", "dataviz", "terminal", "braille"]
 categories = ["command-line-interface", "visualization"]
 readme = "README.md"
+# Ship only the crate + its docs/examples/tests; keep internal design docs
+# (STATE.md, RDOM_SUBSTRATE_FINDINGS.md, agent guides, toolchain pin) and any
+# local tooling out of the published tarball.
+include = [
+    "src/**/*.rs",
+    "examples/**/*.rs",
+    "tests/**/*.rs",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+]
 
 [dependencies]
 # Public rdom-tui surface only (canvas paint API, Color/Style, element

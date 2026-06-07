@@ -147,6 +147,7 @@ pub struct SparklineView {
 }
 
 impl SparklineView {
+    /// Wrap a [`Sparkline`] in a shareable view handle.
     pub fn new(sparkline: Sparkline) -> Self {
         Self {
             inner: Rc::new(RefCell::new(sparkline)),

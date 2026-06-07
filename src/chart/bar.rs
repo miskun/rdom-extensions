@@ -18,13 +18,16 @@ use crate::palette::{LABEL, series_color};
 /// One labeled bar.
 #[derive(Clone, Debug)]
 pub struct Bar {
+    /// Row label drawn in the left gutter.
     pub label: String,
+    /// Bar value (drives the fill ratio against the chart's max).
     pub value: f64,
     /// Explicit color, or `None` to auto-assign from the palette.
     pub color: Option<Color>,
 }
 
 impl Bar {
+    /// A bar labeled `label` with the given `value` and a palette color.
     pub fn new(label: impl Into<String>, value: f64) -> Self {
         Self {
             label: label.into(),
@@ -33,6 +36,7 @@ impl Bar {
         }
     }
 
+    /// Set an explicit bar color (builder style).
     pub fn with_color(mut self, color: Color) -> Self {
         self.color = Some(color);
         self
@@ -48,6 +52,7 @@ pub struct BarChart {
 }
 
 impl BarChart {
+    /// A bar chart over `bars` (auto-scaled, value readouts shown).
     pub fn new(bars: Vec<Bar>) -> Self {
         Self {
             bars,
@@ -75,6 +80,7 @@ impl BarChart {
         self
     }
 
+    /// Replace the bars (for live updates).
     pub fn set_bars(&mut self, bars: Vec<Bar>) {
         self.bars = bars;
     }
@@ -175,12 +181,15 @@ pub struct BarChartView {
 }
 
 impl BarChartView {
+    /// Wrap a [`BarChart`] in a shareable view handle.
     pub fn new(chart: BarChart) -> Self {
         Self {
             inner: Rc::new(RefCell::new(chart)),
         }
     }
 
+    /// Create a `<canvas>` wired to paint this chart; returns its `NodeId`
+    /// for the caller to append and size.
     pub fn mount(&self, dom: &mut TuiDom) -> NodeId {
         let id = dom.create_element("canvas");
         let inner = self.inner.clone();
@@ -190,6 +199,7 @@ impl BarChartView {
         id
     }
 
+    /// Borrow the chart mutably to update it (e.g. `set_bars`).
     pub fn with<R>(&self, f: impl FnOnce(&mut BarChart) -> R) -> R {
         f(&mut self.inner.borrow_mut())
     }

@@ -58,6 +58,24 @@ Ran the pre-publish Grumpy Chief Architect + Product/API passes. Findings action
 
 No blocking findings remain; the crate is publish-ready at `0.1.0`.
 
+### Publish-hygiene pass (learned from the `rdom-virtualtable` 0.1.0 release)
+
+Compared against the just-released sibling crate and adopted its release polish:
+- **Lean tarball.** Added an `include = [...]` allow-list to `Cargo.toml` so the package ships only
+  `src` + `examples` + `tests` + `README`/`CHANGELOG`/`LICENSE`. Before, `cargo package --list`
+  bundled `STATE.md`, `CLAUDE.md`, `AGENTS.md`, `RDOM_SUBSTRATE_FINDINGS.md`, `rust-toolchain.toml`
+  **and a stray `.claude/scheduled_tasks.lock`** — none belong in a published crate. Now 28 files,
+  all crate/docs/examples/tests.
+- **`#![deny(missing_docs)]`** in `lib.rs` + documented the full public surface (43 previously
+  undocumented items: `DataPoint`/`TimeRange`/`Series`/`Guideline`/axis-config fields + ctors, the
+  `Bar`/`Gauge`/`*View` builders/mount/with). `cargo doc -D warnings` is clean; docs.rs will render
+  the whole API. Future public additions now fail the build until documented.
+- **`CHANGELOG.md`** — Keep-a-Changelog format with a `0.1.0` entry (mirrors rdom-virtualtable).
+- **README** — added crates.io / docs.rs / license badges and a "Requires Rust 1.85+ (edition
+  2024)" line.
+
+Gate still clean (fmt + clippy + 79 tests); `cargo doc -D warnings` clean; tarball verified lean.
+
 ## 2026-06-03 — bumped to rdom-tui 0.3.4 (focus vocabulary)
 
 rdom 0.3.4 ships `FOCUS-VOCAB-1`: the UA focus tint is now scoped to interactive controls. A

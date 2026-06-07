@@ -1,5 +1,9 @@
 # rdom-charts
 
+[![crates.io](https://img.shields.io/crates/v/rdom-charts.svg)](https://crates.io/crates/rdom-charts)
+[![docs.rs](https://img.shields.io/docsrs/rdom-charts)](https://docs.rs/rdom-charts)
+![license](https://img.shields.io/crates/l/rdom-charts.svg)
+
 Terminal **charts** for [rdom](https://github.com/miskun/rdom), the browser-faithful DOM for
 terminal applications: a time-series line chart, a sparkline, a bar chart, and a rich gauge.
 
@@ -16,6 +20,8 @@ smooth in a cell grid. Nothing reaches into rdom internals.
 rdom-charts = "0.1"
 rdom-tui = "0.3.14"
 ```
+
+Requires Rust 1.85+ (edition 2024).
 
 ## Try it
 

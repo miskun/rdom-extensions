@@ -17,6 +17,7 @@ pub struct DataPoint {
 }
 
 impl DataPoint {
+    /// A point at `timestamp` (epoch seconds) with `value` (`NaN` = gap).
     pub fn new(timestamp: f64, value: f64) -> Self {
         Self { timestamp, value }
     }
@@ -25,20 +26,26 @@ impl DataPoint {
 /// A time range (visible window, loaded range, etc.).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TimeRange {
+    /// Inclusive start (epoch seconds).
     pub start: f64,
+    /// Inclusive end (epoch seconds).
     pub end: f64,
 }
 
 impl TimeRange {
+    /// A range spanning `[start, end]` (epoch seconds).
     pub fn new(start: f64, end: f64) -> Self {
         Self { start, end }
     }
+    /// Width of the range in seconds (`end - start`).
     pub fn duration(&self) -> f64 {
         self.end - self.start
     }
+    /// Whether `t` falls within `[start, end]` (inclusive).
     pub fn contains(&self, t: f64) -> bool {
         t >= self.start && t <= self.end
     }
+    /// Whether this range overlaps `other` (half-open comparison).
     pub fn overlaps(&self, other: &TimeRange) -> bool {
         self.start < other.end && other.start < self.end
     }
@@ -56,6 +63,7 @@ impl Default for TimeRange {
 /// Rendering style per series.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum SeriesStyle {
+    /// A connected line through the data points.
     #[default]
     Line,
     // Future: Area, StepLine, StepArea
@@ -76,11 +84,15 @@ pub enum ConnectPolicy {
 /// Series definition supplied by callers.
 #[derive(Clone, Debug)]
 pub struct Series {
+    /// Display name (shown in the legend).
     pub name: String,
     /// Explicit color, or `None` to auto-assign from the palette.
     pub color: Option<Color>,
+    /// The data points (any order; the buffer sorts + deduplicates them).
     pub data: Vec<DataPoint>,
+    /// How the series is drawn.
     pub style: SeriesStyle,
+    /// How gaps (`NaN` / missing points) are handled.
     pub connect: ConnectPolicy,
 }
 
@@ -106,22 +118,29 @@ impl Series {
 /// Horizontal reference line drawn across the plot.
 #[derive(Clone, Debug)]
 pub struct Guideline {
+    /// Y value the line is drawn at.
     pub y_value: f64,
+    /// Line + label color.
     pub color: Color,
+    /// Optional label drawn in the gutter at the line's row.
     pub label: Option<String>,
 }
 
 /// Y-axis configuration.
 #[derive(Default)]
 pub struct YAxisConfig {
+    /// Pinned axis minimum, or `None` to auto-fit the data.
     pub min: Option<f64>,
+    /// Pinned axis maximum, or `None` to auto-fit the data.
     pub max: Option<f64>,
+    /// Tick-label formatter, or `None` for the default (`format_y_value`).
     pub format: Option<fn(f64) -> String>,
 }
 
 /// X-axis configuration.
 #[derive(Default)]
 pub struct XAxisConfig {
+    /// Tick-label formatter, or `None` for the default (`format_timestamp`).
     pub format: Option<fn(f64) -> String>,
 }
 

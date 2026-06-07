@@ -229,9 +229,11 @@ impl TimeSeriesChart {
 
     // ── Config ──────────────────────────────────────────────────────
 
+    /// Set the Y-axis configuration (range pinning, label formatter).
     pub fn set_y_config(&mut self, config: YAxisConfig) {
         self.y_config = config;
     }
+    /// Set the X-axis configuration (tick label formatter).
     pub fn set_x_config(&mut self, config: XAxisConfig) {
         self.x_config = config;
     }
@@ -239,6 +241,7 @@ impl TimeSeriesChart {
     pub fn set_smoothing(&mut self, alpha: f64) {
         self.smoothing = alpha.clamp(0.0, 1.0);
     }
+    /// Set the horizontal reference/threshold lines drawn across the plot.
     pub fn set_guidelines(&mut self, guidelines: Vec<Guideline>) {
         self.guidelines = guidelines;
     }
@@ -642,6 +645,7 @@ pub struct TimeSeriesView {
 }
 
 impl TimeSeriesView {
+    /// Wrap a [`TimeSeriesChart`] in a shareable view handle.
     pub fn new(chart: TimeSeriesChart) -> Self {
         Self {
             inner: Rc::new(RefCell::new(chart)),

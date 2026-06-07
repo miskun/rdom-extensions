@@ -24,11 +24,14 @@ use crate::palette::{LABEL, MUTED, series_color};
 /// wins.
 #[derive(Clone, Copy, Debug)]
 pub struct GaugeZone {
+    /// Upper bound of the band (inclusive); matched in ascending order.
     pub upto: f64,
+    /// Fill color when the value lands in this band.
     pub color: Color,
 }
 
 impl GaugeZone {
+    /// A zone covering values up to `upto` (inclusive), filled `color`.
     pub fn new(upto: f64, color: Color) -> Self {
         Self { upto, color }
     }
@@ -74,21 +77,25 @@ impl Gauge {
         self
     }
 
+    /// Set a label drawn in the left gutter (builder).
     pub fn with_label(mut self, label: impl Into<String>) -> Self {
         self.label = Some(label.into());
         self
     }
 
+    /// Hide the trailing numeric readout (builder).
     pub fn without_value(mut self) -> Self {
         self.show_value = false;
         self
     }
 
+    /// Override the readout formatter (builder; default is `{:.0}`).
     pub fn with_value_format(mut self, fmt: fn(f64) -> String) -> Self {
         self.value_fmt = fmt;
         self
     }
 
+    /// Update the displayed value (for live updates).
     pub fn set_value(&mut self, value: f64) {
         self.value = value;
     }
@@ -166,12 +173,15 @@ pub struct GaugeView {
 }
 
 impl GaugeView {
+    /// Wrap a [`Gauge`] in a shareable view handle.
     pub fn new(gauge: Gauge) -> Self {
         Self {
             inner: Rc::new(RefCell::new(gauge)),
         }
     }
 
+    /// Create a `<canvas>` wired to paint this gauge; returns its `NodeId`
+    /// for the caller to append and size.
     pub fn mount(&self, dom: &mut TuiDom) -> NodeId {
         let id = dom.create_element("canvas");
         let inner = self.inner.clone();
@@ -181,6 +191,7 @@ impl GaugeView {
         id
     }
 
+    /// Borrow the gauge mutably to update it (e.g. `set_value`).
     pub fn with<R>(&self, f: impl FnOnce(&mut Gauge) -> R) -> R {
         f(&mut self.inner.borrow_mut())
     }
