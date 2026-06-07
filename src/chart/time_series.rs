@@ -275,7 +275,6 @@ impl TimeSeriesChart {
                     .map(|p| StackedPoint {
                         timestamp: p.timestamp,
                         top: p.value,
-                        baseline: 0.0,
                     })
                     .collect()
             })
@@ -432,15 +431,9 @@ impl TimeSeriesChart {
                 } else {
                     0.5
                 };
-                let b_frac = if y_range > 0.0 {
-                    (p.baseline - y_min) / y_range
-                } else {
-                    0.0
-                };
                 Some(ScaledPoint {
                     bx: (t_frac * (bw - 1.0)).round() as i32,
                     top_by: ((1.0 - v_frac) * (bh - 1.0)).round() as i32,
-                    baseline_by: ((1.0 - b_frac) * (bh - 1.0)).round() as i32,
                 })
             })
             .collect();
@@ -883,7 +876,6 @@ mod tests {
             .map(|i| StackedPoint {
                 timestamp: i as f64 * 60.0,
                 top: (i as f64 * 0.3).sin() * 50.0 + 50.0,
-                baseline: 0.0,
             })
             .collect();
         let scaled = c.scale_series(&stacked, &c.series[0], &grid, 0.0, 100.0);

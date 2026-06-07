@@ -27,8 +27,36 @@ independent of the paint layer so it's unit-testable; the thin paint step draws 
 - Charts rasterize onto a `BrailleGrid` (2×4 dots/cell), then flush into a `ctx.sub(...)` rect.
 - State lives behind `Rc<RefCell<…>>` (the `*View` types) so the paint closure can borrow it and
   the app can mutate it between frames, then request a repaint.
-- `rdom-tui` is a plain crates.io dependency (**`"0.3.4"`** as of 2026-06-03) — no path dep, so
+- `rdom-tui` is a plain crates.io dependency (**`"0.3.14"`** as of 2026-06-07) — no path dep, so
   this crate builds standalone and never reaches into the rdom source tree.
+
+## 2026-06-07 — bumped to rdom-tui 0.3.14 + pre-publish review
+
+Bumped the dep `"0.3.5" → "0.3.14"`. Every intervening rdom release (0.3.6 … 0.3.14) was a
+**non-breaking `rdom-tui`-only** change — `<table>` column-sizing fixes, half-block border welding,
+`display:none`/`drop_subtree` correctness, text-selection / drag-autoscroll, plus additive
+`App::advance(ms)` / `Dom::set_drag_autoscroll`. None touch the public surface this crate consumes
+(canvas paint, cascade, layout, event listeners), so the bump needed **no code change**: gate clean
+(fmt + `clippy -D warnings` + 80 tests), `cargo publish --dry-run` packages + verifies.
+
+Ran the pre-publish Grumpy Chief Architect + Product/API passes. Findings actioned:
+- **(fixed, blocking by our own rule)** Two `#[allow(dead_code)]` in `braille.rs` masked the
+  `StackedPoint.baseline` → `b_frac` → `ScaledPoint.baseline_by` chain — always `0.0`, computed, and
+  read by no renderer (scaffolding for unshipped area/stack fill). The crate's `CLAUDE.md` forbids
+  `#[allow(dead_code)]` to dodge the gate ("land it with its first consumer, not suppress it"), so
+  the dead fields/computation were removed. Re-add when stacked-area rendering actually lands (~4
+  lines). No behavior change; all render tests still green.
+- **(fixed)** `format_timestamp` could emit an invalid month `"13"` on the multi-day `MM/DD` branch
+  (`(days % 365) / 30 + 1` overflows for the last 5 days of the synthetic 365-day year). Month is
+  now clamped to 12; regression test `axis::format_timestamp_month_never_exceeds_twelve`. The
+  formatter is still a deliberately calendar-free placeholder (documented) — real dates come from a
+  caller-supplied `XAxisConfig::format`.
+- **(fixed)** README install snippet pinned `rdom-tui = "0.3.4"`; bumped to `0.3.14`.
+- **(accepted, non-blocking)** `paint_y_axis` takes 9 args (`#[allow(clippy::too_many_arguments)]`) —
+  a legit allow, not a dead-code dodge; could fold into a small params struct later. Per-frame
+  allocation in the paint path (collected/stacked/scaled/grid) remains accepted (see M2 review).
+
+No blocking findings remain; the crate is publish-ready at `0.1.0`.
 
 ## 2026-06-03 — bumped to rdom-tui 0.3.4 (focus vocabulary)
 

@@ -123,20 +123,20 @@ impl BrailleGrid {
 
 // ── Render pipeline types ──────────────────────────────────────────
 
-/// A data point after stacking: top value over a baseline.
+/// A data point after stacking: a value at a timestamp.
+///
+/// (When stacked-area / fill rendering lands it will carry a `baseline`
+/// here; it's omitted until a renderer consumes it, per the crate's
+/// no-dead-scaffolding rule.)
 pub(crate) struct StackedPoint {
     pub timestamp: f64,
     pub top: f64,
-    #[allow(dead_code)] // used by future area/stack fill
-    pub baseline: f64,
 }
 
 /// A point scaled to braille coordinates.
 pub(crate) struct ScaledPoint {
     pub bx: i32,
     pub top_by: i32,
-    #[allow(dead_code)] // used by future area fill
-    pub baseline_by: i32,
 }
 
 /// A series scaled and ready to rasterize.
@@ -267,7 +267,6 @@ mod tests {
             .map(|i| StackedPoint {
                 timestamp: i as f64,
                 top: if i % 2 == 0 { 100.0 } else { 0.0 },
-                baseline: 0.0,
             })
             .collect();
         ema_smooth(&mut points, 0.3);
@@ -282,12 +281,10 @@ mod tests {
             StackedPoint {
                 timestamp: 0.0,
                 top: 10.0,
-                baseline: 0.0,
             },
             StackedPoint {
                 timestamp: 1.0,
                 top: 90.0,
-                baseline: 0.0,
             },
         ];
         ema_smooth(&mut points, 0.0);

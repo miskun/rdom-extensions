@@ -58,9 +58,14 @@ pub fn format_y_value(v: f64) -> String {
 pub fn format_timestamp(t: f64, range_duration: f64) -> String {
     let secs = t as i64;
     if range_duration > 86400.0 * 2.0 {
+        // Synthetic, calendar-free MM/DD: a 12×30-day year purely for
+        // axis tick spacing (no real month lengths/leap years). The final
+        // 5 days of the 365-day cycle would overflow a 30-day month into
+        // an invalid "13", so clamp the month to 12.
         let days = secs / 86400;
-        let month = ((days % 365) / 30) + 1;
-        let day = ((days % 365) % 30) + 1;
+        let day_of_year = days.rem_euclid(365);
+        let month = ((day_of_year / 30) + 1).min(12);
+        let day = (day_of_year % 30) + 1;
         format!("{month:02}/{day:02}")
     } else {
         let h = (secs % 86400) / 3600;
@@ -113,5 +118,15 @@ mod tests {
         // 5 day window → MM/DD
         let multiday = format_timestamp(86400.0, 86400.0 * 5.0);
         assert!(multiday.contains('/'));
+    }
+
+    #[test]
+    fn format_timestamp_month_never_exceeds_twelve() {
+        // Day ~360 within the synthetic 365-day year used to land on
+        // month "13" ((360 % 365) / 30 + 1). The label must stay a valid
+        // 01..=12 month.
+        let label = format_timestamp(360.0 * 86400.0, 86400.0 * 5.0);
+        let month: u32 = label.split('/').next().unwrap().parse().unwrap();
+        assert!((1..=12).contains(&month), "got invalid month in {label:?}");
     }
 }
